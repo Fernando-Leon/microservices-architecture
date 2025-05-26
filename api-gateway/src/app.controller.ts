@@ -34,4 +34,16 @@ export class AppController {
   async deleteCredentialByCURP(@Param('curp') curp: string) {
     return await this.appService.deleteCredentialByCURP(curp);
   }
+
+  // Obtener persona por id
+  @Get('obtener-persona-id/:id')
+  async getPersonById(@Param('id') id: string) {
+    return await this.appService.getPersonById(id);
+  }
+
+  // Obtener todas las personas
+  @Get('obtener-todas-personas')
+  async getAllPersons() {
+    return await this.appService.getAllPersons();
+  }
 }

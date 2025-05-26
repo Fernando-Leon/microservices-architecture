@@ -36,4 +36,14 @@ export class AppService {
   async deleteCredentialByCURP(curp: string) {
     return this.credentialClient.send('deleteCredentialByCURP', curp).toPromise();
   }
+
+  // Obtener persona por ID
+  async getPersonById(id: string) {
+    return this.personClient.send('findOnePerson', id).toPromise();
+  }
+
+  // Obtener todas las personas
+  async getAllPersons() {
+    return this.personClient.send('findAllPerson', {}).toPromise();
+  }
 }

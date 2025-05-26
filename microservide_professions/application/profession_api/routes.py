@@ -107,3 +107,11 @@ def update_profession_by_nombre(nombre):
 
     db.session.commit()
     return jsonify(profession.to_json())
+
+# Obtener una profesión por id
+@profession_api_blueprint.route('/api/professions/<string:profession_id>', methods=['GET'])
+def get_profession_by_id(profession_id):
+    profession = Profession.query.filter_by(id=profession_id).first()
+    if not profession:
+        return jsonify({'error': 'Profession no encontrada'}), 404
+    return jsonify(profession.to_json())
