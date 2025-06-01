@@ -20,6 +20,20 @@ export class CredentialController {
     return this.credentialService.createFullCredential(person, address, credential);
   }
 
+  @MessagePattern('updateFullCredential')
+  updateFullCredential(
+    @Payload() { id, person, address, credential }: { id: string; person: any; address: any; credential: UpdateCredentialDto }
+  ) {
+    return this.credentialService.updateFullCredential(id, person, address, credential);
+  }
+
+  @MessagePattern('updateCredentialByCURP')
+  updateCredentialByCURP(
+    @Payload() { curp, person, address, credential }: { curp: string; person: any; address: any; credential: UpdateCredentialDto }
+  ) {
+    return this.credentialService.updateFullCredentialByCURP(curp, person, address, credential);
+  }
+
   @MessagePattern('findAllCredentialsWithAllData')
   findAllCredentialsWithAllData() {
     return this.credentialService.findAllCredentialsWithAllData();
@@ -38,16 +52,6 @@ export class CredentialController {
   @MessagePattern('findOneCredential')
   findOne(@Payload() id: number) {
     return this.credentialService.findOne(id);
-  }
-
-  @MessagePattern('updateCredential')
-  update(@Payload() updateCredentialDto: UpdateCredentialDto) {
-    return this.credentialService.update(updateCredentialDto.id, updateCredentialDto);
-  }
-
-  @MessagePattern('removeCredential')
-  remove(@Payload() id: number) {
-    return this.credentialService.remove(id);
   }
 
   @MessagePattern('deleteCredentialByCURP')

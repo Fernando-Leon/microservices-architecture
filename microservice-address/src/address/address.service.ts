@@ -22,20 +22,20 @@ export class AddressService {
     return this.addressRepository.find();
   }
 
-  findOne(id: number): Promise<Address | null> {
-    return this.addressRepository.findOne({ where: { id: id.toString() } });
+  findOne(id: string): Promise<Address | null> {
+    return this.addressRepository.findOne({ where: { id } });
   }
 
   async findByPersonId(personId: string) {
     return this.addressRepository.findOne({ where: { personId } });
   }
 
-  update(id: number, updateAddressDto: UpdateAddressDto) {
-    return `This action updates a #${id} address`;
+  update(id: string, updateAddressDto: UpdateAddressDto) {
+    return this.addressRepository.update(id, updateAddressDto);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} address`;
+  updateAddressByPersonId(personId: string, updateAddressDto: UpdateAddressDto) {
+    return this.addressRepository.update({ personId }, updateAddressDto);
   }
 
   async removeByPersonId(personId: string) {

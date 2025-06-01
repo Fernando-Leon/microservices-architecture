@@ -128,11 +128,112 @@ export class CredentialService {
     });
   }
 
-  update(id: number, updateCredentialDto: UpdateCredentialDto) {
-    return `This action updates a #${id} credential`;
+  async updateFullCredential(
+    credentialId: string,
+    personDto,
+    addressDto,
+    credentialDto
+  ): Promise<any> {
+    // Buscar la credencial existente
+    const credential = await this.credentialRepository.findOne({
+      where: { id: credentialId },
+    });
+    if (!credential) {
+      throw new Error('Credencial no encontrada');
+    } else {
+      console.log('Credencial encontrada:', credential);
+    }
+
+    // Actualizar persona
+    const person = await this.personClient
+      .send('updatePerson', { id: credential.personId, ...personDto })
+      .toPromise();
+
+    console.log('Persona actualizada:', person);
+
+
+    console.log('Dirección a actualizar:', addressDto);
+
+    // Actualizar dirección
+    addressDto.personId = credential.personId;
+    const address = await this.addressClient
+      .send('updateAddressByPersonId', { personId: credential.personId, ...addressDto })
+      .toPromise();
+
+    console.log('Dirección actualizada:', address);
+
+    // Actualizar credencial
+    await this.credentialRepository.update(credentialId, credentialDto);
+    const updatedCredential = await this.credentialRepository.findOne({
+      where: { id: credentialId.toString() },
+    });
+
+  const updatedPerson = await this.personClient
+    .send('findOnePerson', credential.personId)
+    .toPromise();
+
+  const updatedAddress = await this.addressClient
+    .send('findAddressByPersonId', credential.personId)
+    .toPromise();
+
+    return {
+      status: 'success',
+      credential: updatedCredential,
+      person: updatedPerson,
+      address: updatedAddress,
+    };
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} credential`;
+  async updateFullCredentialByCURP(
+    curp: string,
+    personDto,
+    addressDto,
+    credentialDto
+  ): Promise<any> {
+    // Buscar la persona por CURP
+    const person = await this.personClient.send('findPersonByCURP', curp).toPromise();
+    if (!person || !person.id) {
+      throw new Error('Persona no encontrada');
+    }
+
+    // Buscar la credencial por personId
+    const credential = await this.credentialRepository.findOne({
+      where: { personId: person.id },
+    });
+    if (!credential) {
+      throw new Error('Credencial no encontrada');
+    }
+
+    // Actualizar persona
+    await this.personClient
+      .send('updatePerson', { id: person.id, ...personDto })
+      .toPromise();
+
+    // Actualizar dirección
+    addressDto.personId = person.id;
+    await this.addressClient
+      .send('updateAddressByPersonId', { personId: person.id, ...addressDto })
+      .toPromise();
+
+    // Actualizar credencial
+    await this.credentialRepository.update(credential.id, credentialDto);
+
+    // Consultar datos actualizados
+    const updatedCredential = await this.credentialRepository.findOne({
+      where: { id: credential.id.toString() },
+    });
+    const updatedPerson = await this.personClient
+      .send('findOnePerson', person.id)
+      .toPromise();
+    const updatedAddress = await this.addressClient
+      .send('findAddressByPersonId', person.id)
+      .toPromise();
+
+    return {
+      status: 'success',
+      credential: updatedCredential,
+      person: updatedPerson,
+      address: updatedAddress,
+    };
   }
 }

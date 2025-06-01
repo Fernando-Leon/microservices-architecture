@@ -24,18 +24,27 @@ export class AddressController {
   }
 
   @MessagePattern('findOneAddress')
-  findOne(@Payload() id: number) {
+  findOne(@Payload() id: string) {
     return this.addressService.findOne(id);
   }
 
   @MessagePattern('updateAddress')
   update(@Payload() updateAddressDto: UpdateAddressDto) {
+    console.log('Controller: updateAddress called');
+    console.log('Updating address with ID:', updateAddressDto.id);
+    console.log('Update data:', updateAddressDto);
     return this.addressService.update(updateAddressDto.id, updateAddressDto);
   }
 
-  @MessagePattern('removeAddress')
-  remove(@Payload() id: number) {
-    return this.addressService.remove(id);
+  @MessagePattern('updateAddressByPersonId')
+  updateAddressByPersonId(@Payload() updateAddressDto: UpdateAddressDto ) {
+    if (!updateAddressDto.personId) {
+      throw new Error('personId is required to update address by personId');
+    }
+    console.log('Controller: updateAddressByPersonId called');
+    console.log('Updating address for personId:', updateAddressDto.personId);
+    console.log('Update data:', updateAddressDto);
+    return this.addressService.updateAddressByPersonId(updateAddressDto.personId, updateAddressDto);
   }
 
   @MessagePattern('removeAddressByPersonId')

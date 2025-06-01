@@ -13,13 +13,13 @@ export class PersonController {
     return this.personService.create(createPersonDto);
   }
 
-  @MessagePattern('findAllPerson')
+  @MessagePattern('findAllPersons')
   findAll() {
     return this.personService.findAll();
   }
 
   @MessagePattern('findOnePerson')
-  findOne(@Payload() id: number) {
+  findOne(@Payload() id: string) {
     return this.personService.findOne(id);
   }
 
@@ -30,7 +30,15 @@ export class PersonController {
 
   @MessagePattern('updatePerson')
   update(@Payload() updatePersonDto: UpdatePersonDto) {
+    console.log('Controller: updatePerson called');
+    console.log('Updating person with ID:', updatePersonDto.id);
+    console.log('Update data:', updatePersonDto); 
     return this.personService.update(updatePersonDto.id, updatePersonDto);
+  }
+
+  @MessagePattern('updatePersonByCURP')
+  updatePersonByCURP(@Payload() { curp, personDto }: { curp: string; personDto: UpdatePersonDto }) {
+    return this.personService.updatePersonByCURP(curp, personDto);
   }
 
   @MessagePattern('removePerson')

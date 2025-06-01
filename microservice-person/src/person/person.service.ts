@@ -30,17 +30,29 @@ export class PersonService {
     return this.personRepository.find();
   }
 
-  findOne(id: number): Promise<Person | null> {
+  findOne(id: string): Promise<Person | null> {
     return this.personRepository.findOne({
-      where: { id: id.toString() },
+      where: { id },
     });
   }
 
-  update(id: number, updatePersonDto: UpdatePersonDto) {
-    return `This action updates a #${id} person`;
+  update(id: string, updatePersonDto: UpdatePersonDto) {
+    console.log('Service: updatePerson called');
+    console.log('Updating person with ID:', id);
+    console.log('Update data:', updatePersonDto);
+    return this.personRepository.update(id, updatePersonDto);
   }
 
   async remove(id: string) {
     return this.personRepository.delete(id);
+  }
+
+  async updatePersonByCURP(curp: string, personDto: UpdatePersonDto): Promise<Person | null> {
+    const person = await this.findPersonByCURP(curp);
+    if (!person) {
+      return null;
+    }
+    Object.assign(person, personDto);
+    return this.personRepository.save(person);
   }
 }

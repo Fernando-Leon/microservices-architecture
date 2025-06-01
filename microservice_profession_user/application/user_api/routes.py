@@ -7,7 +7,7 @@ import uuid
 user_api_blueprint = Blueprint('user_api', __name__)
 
 # Configura las URLs de los microservicios
-PERSON_SERVICE_URL = 'http://localhost:3000/obtener-persona-id'  # Actualizado
+PERSON_SERVICE_URL = 'http://localhost:3000/api/person'  # Actualizado
 PROFESSION_SERVICE_URL = 'http://localhost:5000/api/professions'  # Actualizado
 
 @user_api_blueprint.route('/person-profession', methods=['POST'])
