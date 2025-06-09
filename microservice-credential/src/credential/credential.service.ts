@@ -122,10 +122,24 @@ export class CredentialService {
     return this.credentialRepository.find();
   }
 
-  findOne(id: number): Promise<Credential | null> {
-    return this.credentialRepository.findOne({
+  async findOne(id: number): Promise<any> {
+    const credential = await this.credentialRepository.findOne({
       where: { id: id.toString() },
     });
+    if (!credential) {
+      return { status: 'error', message: 'Credencial no encontrada' };
+    }
+
+    const person = await this.personClient.send('findOnePerson', credential.personId).toPromise();
+
+    const address = await this.addressClient.send('findAddressByPersonId', credential.personId).toPromise();
+
+    return {
+      status: 'success',
+      credential,
+      person,
+      address,
+    };
   }
 
   async updateFullCredential(
